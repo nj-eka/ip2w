@@ -1,0 +1,16 @@
+[Unit]
+Description=uWSGI instance to serve ip2w application
+After=netwok.target
+
+[Service]
+EnvironmentFile=/usr/local/etc/ip2w/ip2w.env
+
+ExecStartPre=-/usr/bin/bash -c "mkdir -p $IP2W_LOG_DIR; chown $IP2W_USER:$IP2W_GROUP $IP2W_LOG_DIR; chmod g+w $IP2W_LOG_DIR"
+ExecStartPre=-/usr/bin/bash -c "mkdir -p $IP2W_RUN_DIR; chown $IP2W_USER:$IP2W_GROUP $IP2W_RUN_DIR"
+
+ExecStart=/usr/bin/bash -c "cd $IP2W_WORKING_DIR; /var/pyvenvs/ip2w/bin/uwsgi --ini $IP2W_INI_FILE" 
+
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

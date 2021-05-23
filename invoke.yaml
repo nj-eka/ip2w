@@ -1,0 +1,89 @@
+project:
+  name: ip2w
+  version: 0.1
+  updated_date:
+  author: JN
+  author_email: njeka0108@gmail.com 
+  url: https://github.com/nj-eka/ip2w.git
+deb:
+  use_git: false
+  source: .
+  debian: ./builddeb/DEBIAN
+  config: ./package_config
+  output: ./dockers/ubuntu
+rpm:
+  working_dir: .
+  params:
+    buildrpm: buildrpm/buildrpm.sh
+    spec: buildrpm/ip2w.spec
+    rpmdir: dockers/centos
+  run: ["sudo chmod +x {buildrpm}", "./{buildrpm} {spec} {rpmdir}"]
+docker:
+  build:
+    ubuntu: 
+      working_dir: ./dockers/ubuntu
+      params:
+        tag: ubuntu/systemd/ip2w
+      run: ["docker build --rm -t {tag} ."]
+    centos:
+      working_dir: ./dockers/centos
+      params:
+        tag: centos/systemd/ip2w
+      run: ["docker build --rm -t {tag} ."]
+    ubuntu_rebuild: 
+      working_dir: ./dockers/ubuntu
+      params:
+        tag: ubuntu/systemd/ip2w
+      run: ["docker rm -f $(docker ps -as | grep {tag} | awk '{ print $1 }')", 
+            "docker rmi -f {tag}", 
+            "docker build --rm -t {tag} ."]
+  run:
+    ubuntu: 
+      params:
+        tag: ubuntu/systemd/ip2w
+        name: dusip2w
+        host_port: 8002
+        container_port: 80
+      run: ["docker stop {name}", 
+            "docker rm {name}", 
+            "docker run -d --name {name} --tmpfs /tmp --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:ro -t -p {host_port}:{container_port} {tag}"]
+    centos: 
+      params:
+        tag: centos/systemd/ip2w
+        name: dcsip2w
+        host_port: 8003
+        container_port: 80
+      run: ["docker stop {name}", 
+            "docker rm {name}", 
+            "docker run -d --privileged --name {name} -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p {host_port}:{container_port} {tag}"]
+tests:
+  ubuntu: 
+    params:
+      host: localhost
+      port: 8002
+    run: ["curl 'http://{host}:{port}/ip2w/79.165.43.252'", 
+          "curl 'http://{host}:{port}/ip2w/ipinfo?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru&mode=html'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru&mode=xml'",
+          "curl 'http://{host}:{port}/ip2w/weather?lat=33.333&lon=55.555'",
+          "curl 'http://{host}:{port}/ip2w/onecall?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/onecall?ip=79.165.43.252&exclude'",
+          "curl 'http://{host}:{port}/ip2w/onecall?lat=33.333&lon=55.555&exclude=daily'",
+          ]
+  centos: 
+    params:
+      host: localhost
+      port: 8003
+    run: ["curl 'http://{host}:{port}/ip2w/79.165.43.252'", 
+          "curl 'http://{host}:{port}/ip2w/ipinfo?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru&mode=html'",
+          "curl 'http://{host}:{port}/ip2w/weather?ip=79.165.43.252&lang=ru&mode=xml'",
+          "curl 'http://{host}:{port}/ip2w/weather?lat=33.333&lon=55.555'",
+          "curl 'http://{host}:{port}/ip2w/onecall?ip=79.165.43.252'",
+          "curl 'http://{host}:{port}/ip2w/onecall?ip=79.165.43.252&exclude'",
+          "curl 'http://{host}:{port}/ip2w/onecall?lat=33.333&lon=55.555&exclude=daily'",
+          ]
