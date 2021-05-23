@@ -11,7 +11,6 @@ BuildArch:      noarch
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-BuildRequires: systemd
 Requires: systemd, nginx, python3.9
 Summary:  Tutorial uwsgi service providing wether information for ip address. 
 
