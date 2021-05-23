@@ -1,0 +1,25 @@
+#!/bin/sh
+# postrm script for ip2w
+
+echo "Stopping ip2w service..."
+systemctl stop ip2w
+
+echo "Removing link /etc/systemd/system/ip2w.service..."
+rm -rf /etc/systemd/system/ip2w.service
+
+echo "Removing ip2w app..."
+rm -rf /usr/local/ip2w
+rm -rf /usr/local/etc/ip2w
+rm -rf /usr/lib/systemd/system/ip2w.service
+rm -rf /etc/nginx/conf.d/ip2w.nginx.conf
+rm -rf /var/log/ip2w
+rm -rf /var/pyvenvs/ip2w
+
+echo "Restoring /etc/nginx/conf.d/default.conf..."
+# mv /etc/nginx/conf.d/default.conf.orig /etc/nginx/conf.d/default.conf
+
+echo "Restarting nginx..."
+systemctl daemon-reload
+systemctl restart nginx
+
+exit 0

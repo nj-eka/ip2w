@@ -1,0 +1,12 @@
+Package: ip2w
+Version: 0.1
+Architecture: all
+Maintainer: JN, <njeka0108@gmail.com>
+Depends: nginx, python3.9, python3-pip, python3.9-venv
+Suggests: ip2w
+Section: web
+Priority: optional
+Homepage: https://github.com/nj-eka/ip2w.git
+Description: Tutorial uwsgi service providing wether information for ip address. 
+ This is a simple tutorial uwsgi python application implementing service that provides various information for ip address:
+ ip details iteself (ipinfo method)  and various weather information (wether, onecall) at geo location taken from ip address.

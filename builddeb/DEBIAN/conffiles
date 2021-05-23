@@ -1,0 +1,6 @@
+/usr/local/ip2w/ip2w.py
+/usr/local/ip2w/requirements.txt
+/usr/local/ip2w/ip2w.uwsgi.ini
+/usr/local/etc/ip2w/ip2w.env
+/usr/lib/systemd/system/ip2w.service
+/etc/nginx/conf.d/ip2w.nginx.conf
